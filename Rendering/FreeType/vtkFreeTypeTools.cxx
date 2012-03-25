@@ -24,19 +24,19 @@
 #include "vtkStdString.h"
 #include "vtkUnicodeString.h"
 
+#define VTK_USE_FTGL 0
+
 // FTGL
-#include "vtkftglConfig.h"
-#include "FTLibrary.h"
+#if VTK_USE_FTGL
+  #include "vtkftglConfig.h"
+  #include "FTLibrary.h"
+#endif // VTK_USE_FTGL
 
 // The embedded fonts
 #include "fonts/vtkEmbeddedFonts.h"
 
 #ifndef _MSC_VER
 # include <stdint.h>
-#endif
-
-#ifdef FTGL_USE_NAMESPACE
-using namespace ftgl;
 #endif
 
 // Print debug info
@@ -82,7 +82,10 @@ vtkFreeTypeToolsCleanup::vtkFreeTypeToolsCleanup()
 #if VTK_FTFC_DEBUG_CD
   printf("vtkFreeTypeToolsCleanup::vtkFreeTypeToolsCleanup\n");
 #endif
+
+#if VTK_USE_FTGL
   FTLibraryCleanup::AddDependency(&vtkFreeTypeToolsCleanupCallback);
+#endif
 }
 
 //----------------------------------------------------------------------------
@@ -150,6 +153,15 @@ vtkFreeTypeTools::vtkFreeTypeTools()
   this->ImageCache   = NULL;
   this->CMapCache    = NULL;
   this->ScaleToPowerTwo = false;
+
+  // initialize the freetype library instance
+  this->FTLibraryInstance = new FT_Library;
+  FT_Error err = FT_Init_FreeType(this->FTLibraryInstance);
+  if(err)
+    {
+    delete this->FTLibraryInstance;
+    this->FTLibraryInstance = NULL;
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -159,6 +171,11 @@ vtkFreeTypeTools::~vtkFreeTypeTools()
   printf("vtkFreeTypeTools::~vtkFreeTypeTools\n");
 #endif
   this->ReleaseCacheManager();
+
+  // cleanup the FT_Library instance
+  FT_Done_FreeType(*this->FTLibraryInstance);
+  delete this->FTLibraryInstance;
+  this->FTLibraryInstance = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -168,13 +185,15 @@ FT_Library* vtkFreeTypeTools::GetLibrary()
   printf("vtkFreeTypeTools::GetLibrary\n");
 #endif
 
-  FTLibrary * ftgl_lib = FTLibrary::GetInstance();
+#if VTK_USE_FTGL
+  FTLibrary *ftgl_lib = FTLibrary::GetInstance();
   if (ftgl_lib)
     {
     return ftgl_lib->GetLibrary();
     }
+#endif //VTK_USE_FTGL
 
-  return NULL;
+  return this->FTLibraryInstance;
 }
 
 //----------------------------------------------------------------------------

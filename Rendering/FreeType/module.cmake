@@ -4,5 +4,5 @@ vtk_module(vtkRenderingFreeType
   DEPENDS
     vtkRenderingCore
     vtkfreetype
-    vtkftgl
+    #vtkftgl
   )

@@ -231,6 +231,8 @@ private:
   FTC_ImageCache *ImageCache;
   FTC_CMapCache  *CMapCache;
 
+  FT_Library *FTLibraryInstance;
+
   // Description:
   // Get the FreeType cache manager, image cache and charmap cache
   FTC_Manager* GetCacheManager();
