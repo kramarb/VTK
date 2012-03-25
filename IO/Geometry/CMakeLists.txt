@@ -9,7 +9,7 @@ SET(Module_SRCS
   vtkDataSetReader.cxx
   vtkDataSetWriter.cxx
   vtkFacetWriter.cxx
-  vtkFLUENTReader.cxx
+  #vtkFLUENTReader.cxx
   vtkGAMBITReader.cxx
   vtkGenericDataObjectReader.cxx
   vtkGenericDataObjectWriter.cxx
