@@ -27,7 +27,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkSmartPointer.h"
 #include "vtkTypedArray.h"
-
+#include <algorithm>
 ///////////////////////////////////////////////////////////////////////////////
 // vtkNormalizeMatrixVectors
 
